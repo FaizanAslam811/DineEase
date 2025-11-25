@@ -1,0 +1,1051 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DineEase</title>
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Open+Sans:wght@400&display=swap"
+    rel="stylesheet">
+  <!-- Font Awesome for Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+  <!-- ✅ Preload Hero Images -->
+  <link rel="preload" as="image" href="./imgi_1_2151182445.jpg">
+  <link rel="preload" as="image" href="./imgi_1_dinner-item-1.png">
+
+  <style>
+    /* Logout Button Styling */
+.logout-btn {
+  background: linear-gradient(45deg, #ff4d4d, #ff1a1a);
+  color: white;
+  border: none;
+  padding: 10px 22px;
+  border-radius: 25px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: 0.3s ease;
+  font-family: 'Poppins', sans-serif;
+}
+
+.logout-btn:hover {
+  background: linear-gradient(45deg, #ff1a1a, #cc0000);
+  transform: scale(1.05);
+}
+
+    .top-info-wrapper {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      z-index: 9999;
+    }
+
+    .top-info-bar {
+      background-color: #8cc152;
+      color: white;
+      font-size: 14px;
+      font-weight: 600;
+      width: 100%;
+      padding: 8px 0;
+    }
+
+    .info-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+      gap: 20px;
+    }
+
+    .info-container i {
+      margin-right: 8px;
+    }
+
+    @media (max-width: 768px) {
+      .top-info-wrapper {
+        display: none;
+      }
+
+      .info-container {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        gap: 5px;
+      }
+
+      .top-info-bar {
+        border-bottom: 3px solid white;
+      }
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body,
+    html {
+      height: 100%;
+      font-family: 'Open Sans', sans-serif;
+      overflow-x: hidden;
+    }
+
+    nav {
+      z-index: 1000;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 80px;
+      position: fixed;
+      width: 100%;
+      top: 0;
+      /* changed from 32px */
+      background-color: white;
+      transition: all 0.3s ease-in-out;
+    }
+
+    .hero-section {
+      padding-top: 100px;
+      /* optional: adjust so content isn't hidden behind nav */
+    }
+
+    nav.scrolled {
+      background-color: white !important;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    nav.scrolled .logo {
+      color: black;
+    }
+
+    nav.scrolled .logo span {
+      color: orange;
+    }
+
+    nav.scrolled .nav-links a {
+      color: black !important;
+    }
+
+    nav.scrolled .social-icons a {
+      color: black !important;
+    }
+
+    .logo {
+      font-size: 1.8rem;
+      font-family: 'Orbitron', sans-serif;
+      color: black;
+    }
+
+    .logo span {
+      color: orange;
+    }
+
+    .menu-toggle {
+      display: none;
+      font-size: 24px;
+      color: black;
+      cursor: pointer;
+      z-index: 1001;
+    }
+
+    .nav-links {
+      list-style: none;
+      display: flex;
+      gap: 30px;
+      align-items: center;
+      position: relative;
+    }
+
+    .nav-links>li {
+      position: relative;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      color: black;
+      font-weight: 500;
+      cursor: pointer;
+    }
+
+    .dropdown-menu {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      background-color: white;
+      padding: 10px 0;
+      list-style: none;
+      min-width: 150px;
+      z-index: 999;
+      border-radius: 4px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+      max-height: 200px;
+      overflow-y: auto;
+    }
+
+    .dropdown-menu::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .dropdown-menu::-webkit-scrollbar-thumb {
+      background-color: orange;
+      border-radius: 3px;
+    }
+
+    .dropdown-menu li {
+      padding: 10px 20px;
+    }
+
+    .dropdown-menu li a {
+      color: black;
+      text-decoration: none;
+      display: block;
+      font-weight: 500;
+    }
+
+    .dropdown-menu li a:hover {
+      background-color: rgba(0, 0, 0, 0.05);
+    }
+
+    .dropdown.show .dropdown-menu {
+      display: block;
+    }
+
+    .social-icons a {
+      margin-left: 15px;
+      color: white;
+    }
+
+    .hero-section {
+      height: 100vh;
+      position: relative;
+      color: white;
+      text-align: center;
+      padding-top: 120px;
+      background-image: url('./imgi_1_2151182445.jpg');
+      /* ✅ Initial background */
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+    }
+
+    .overlay {
+      background-color: rgba(0, 0, 0, 0.4);
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      padding: 20px;
+      max-width: 800px;
+      margin: 100px auto 40px;
+      transition: opacity 0.5s ease;
+    }
+
+    .hero-content .slide {
+      display: none;
+      animation: fadeSlide 1s ease-in-out;
+    }
+
+    .hero-content .slide.active {
+      display: block;
+    }
+
+    .hero-content h1 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 48px;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6);
+      margin-bottom: 15px;
+    }
+
+    .hero-content p {
+      font-size: 18px;
+      line-height: 1.6;
+      color: #f0f0f0;
+      text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.4);
+    }
+
+    @keyframes fadeSlide {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .dots {
+      margin-top: 30px;
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .dot {
+      height: 14px;
+      width: 14px;
+      background-color: #ccc;
+      border-radius: 50%;
+      display: inline-block;
+      transition: background-color 0.3s ease;
+      cursor: pointer;
+    }
+
+    .dot.active {
+      background-color: orange;
+      box-shadow: 0 0 8px orange;
+    }
+
+    .scroll-icon {
+      z-index: 2;
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    .scroll-icon i {
+      font-size: 28px;
+      color: white;
+      animation: bounce 2s infinite;
+    }
+
+    @keyframes bounce {
+
+      0%,
+      100% {
+        transform: translateY(0);
+      }
+
+      50% {
+        transform: translateY(10px);
+      }
+    }
+
+    @media (max-width: 991px) {
+      nav {
+        padding: 20px 30px;
+      }
+
+      .menu-toggle {
+        display: block;
+        color: white;
+
+        #menu-toggle.hide {
+          display: none !important;
+        }
+      }
+
+      .nav-links {
+        flex-direction: column;
+        background-color: white;
+        position: fixed;
+        top: 0;
+        right: -100%;
+        width: 260px;
+        height: 100%;
+        padding: 60px 20px 20px;
+        transition: right 0.3s ease-in-out;
+        box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
+        z-index: 999;
+      }
+
+      .nav-links.show {
+        right: 0;
+      }
+
+      .nav-close {
+        align-self: flex-end;
+        font-size: 24px;
+        color: #333;
+        cursor: pointer;
+        margin-bottom: 20px;
+        display: block;
+      }
+
+      .nav-links li {
+        margin: 20px 0;
+      }
+
+      .nav-links a {
+        color: black;
+        font-size: 18px;
+      }
+
+      .dropdown-menu {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        background-color: #f9f9f9;
+      }
+
+      .dropdown-menu li a {
+        color: #333;
+      }
+
+      .dropdown-menu li a:hover {
+        background-color: #eee;
+      }
+
+      .dropdown-toggle i {
+        color: black !important;
+      }
+
+      .social-icons {
+        display: flex;
+        gap: 10px;
+        margin-top: 30px;
+      }
+
+      .social-icons a {
+        color: #333;
+        font-size: 18px;
+      }
+    }
+
+    @media (min-width: 992px) {
+      .nav-close {
+        display: none;
+      }
+    }
+
+    @media (max-width: 768px) {
+      nav {
+        top: 0;
+        background-color: black;
+      }
+
+      .logo {
+        color: white
+      }
+    }
+
+    /* ✅ Animation keyframes */
+    @keyframes fadeUp {
+      0% {
+        opacity: 0;
+        transform: translateY(40px);
+      }
+
+      100% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* ✅ Animation class */
+    .animate-fadeUp {
+      opacity: 0;
+      animation: fadeUp 0.8s ease-out forwards;
+    }
+  </style>
+</head>
+
+<body>
+
+
+  <div id="Home" style="position: absolute; top: 0;"></div>
+
+  <!-- NAVIGATION -->
+  <!-- NAVIGATION -->
+  <!-- NAVIGATION -->
+  <nav>
+    <div class="logo nav-click" onclick="document.getElementById('home').scrollIntoView({ behavior: 'smooth' });">
+      DineEase<span>.</span>
+    </div>
+
+    <div class="menu-toggle" id="menu-toggle"><i class="fas fa-bars"></i></div>
+
+    <ul class="nav-links" id="nav-links">
+      <span class="nav-close" id="nav-close"><i class="fas fa-xmark"></i></span>
+      <li><a href="index.html" class="nav-click">Home</a></li>
+      <li class="dropdown" id="dropdown">
+        <a href="menu.html" class="nav-click">Menu</a>
+        <span class="dropdown-toggle" id="dropdown-toggle" style="cursor: pointer; margin-left: 5px;">
+
+        </span>
+
+      </li>
+      <li><a href="Blog.html" class="nav-click">Blog</a></li>
+      <li><a href="about.html" class="nav-click">About</a></li>
+      <li><a href="contactus.html" class="nav-click">Contact</a></li>
+      <li><a href="cart.html" class="nav-click" title="Cart"><i class="fas fa-shopping-cart"
+            style="color: green;"></i></a></li>
+
+      <li class="social-icons">
+        <a href="#"><i class="fab fa-facebook-f"></i></a>
+        <a href="#"><i class="fab fa-twitter"></i></a>
+        <a href="#"><i class="fab fa-linkedin-in"></i></a>
+      </li>
+    </ul>
+    <button id="logoutBtn" class="logout-btn">Logout</button>
+
+  </nav>
+
+  <!-- HERO SECTION -->
+  <section class="hero-section" id="home">
+    <div class="overlay"></div>
+    <div class="hero-content">
+      <div class="slide active">
+        <h1>Our Menu</h1>
+        <p>Food YoU Like</p>
+      </div>
+      <div class="slide">
+        <h1>Our Menu</h1>
+        <p>Food YoU Like</p>
+      </div>
+
+      <div class="dots">
+        <span class="dot active" onclick="showSlide(0)"></span>
+        <span class="dot" onclick="showSlide(1)"></span>
+      </div>
+
+      <!-- ✅ View Details Button -->
+      <a href="#about" class="view-btn">View Details</a>
+    </div>
+  </section>
+
+  <style>
+    .view-btn {
+      display: inline-block;
+      margin-top: 20px;
+      background-color: orange;
+      color: white;
+      padding: 12px 30px;
+      border-radius: 25px;
+      text-decoration: none;
+      font-size: 16px;
+      font-weight: 600;
+      transition: background 0.3s ease;
+      z-index: 2;
+      position: relative;
+    }
+
+    .view-btn:hover {
+      background-color: #ff8000;
+    }
+  </style>
+  <section id="about">
+    <style>
+      #about {
+        display: flex;
+        justify-content: center;
+        /* 🔥 centers horizontally */
+        align-items: center;
+        /* 🔥 centers vertically */
+        gap: 40px;
+        padding: 60px 8%;
+        font-family: "Poppins", sans-serif;
+        color: #444;
+        text-align: center;
+        /* 🔥 centers all text */
+      }
+
+      #about .about-images img {
+        width: 420px;
+        height: auto;
+        border-radius: 10px;
+        object-fit: cover;
+        margin: 0 auto;
+        /* 🔥 centers the image */
+        display: block;
+      }
+
+      #about .sub-title {
+        font-size: 60px;
+        font-family: "Cormorant Garamond", serif;
+        color: #c8b085;
+        margin: 0;
+        font-weight: 300;
+      }
+      .logout-btn {
+  cursor: pointer;
+}
+
+
+      #about .title {
+        font-size: 46px;
+        margin: 10px 0 20px;
+        font-weight: 700;
+        color: #222;
+      }
+
+      #about .description {
+        max-width: 450px;
+        line-height: 1.7;
+        margin: 0 auto 25px;
+        /* 🔥 centers block text */
+      }
+
+      #about .hours {
+        margin-bottom: 15px;
+      }
+
+      #about .phone {
+        font-size: 32px;
+        color: #b68a45;
+      }
+
+      /* Responsive */
+      @media (max-width: 900px) {
+        #about {
+          flex-direction: column;
+        }
+
+        #about .about-images img {
+          width: 100%;
+        }
+      }
+    </style>
+   <section id="style">
+  <h2 class="section-heading">Our Menu</h2>
+  <div class="style-container">
+
+    <!-- Breakfast Column -->
+    <div class="style-column">
+      <h3>Breakfast</h3>
+
+      <div class="menu-item">
+        <img src="https://img.freepik.com/premium-photo/anda-paratha-omelet-paratha-served-plate-isolated-background-top-view-indian-pakistani-desi-food_689047-3095.jpg?w=1380" alt="Paratha with Omelette">
+        <div class="menu-info">
+          <h4>Paratha with Omelette</h4>
+          <p class="ingredients">Wheat, Eggs, Butter, Spices</p>
+          <span class="price">PKR 450</span>
+          <button class="add-cart" onclick="addToCart('Paratha with Omelette',450)">Add to Cart</button>
+        </div>
+      </div>
+
+      <div class="menu-item">
+        <img src="https://img.freepik.com/premium-photo/bun-maska-tea-bun-maska-chai-combo-features-slightly-sweet-bun-studded-with-raisins-that-is-cut-into-half-laden-with-wholesome-butter-mumbai-food_466689-3820.jpg" alt="Chai with Bun">
+        <div class="menu-info">
+          <h4>Chai with Bun</h4>
+          <p class="ingredients">Tea, Milk, Sugar, Bun</p>
+          <span class="price">PKR 150</span>
+          <button class="add-cart" onclick="addToCart('Chai with Bun',150)">Add to Cart</button>
+        </div>
+      </div>
+
+      <div class="menu-item">
+        <img src="https://propakistani.pk/foodnama/wp-content/uploads/2021/04/Halwa-Puri.png" alt="Halwa Puri">
+        <div class="menu-info">
+          <h4>Halwa Puri</h4>
+          <p class="ingredients">Semolina, Flour, Sugar, Ghee</p>
+          <span class="price">PKR 350</span>
+          <button class="add-cart" onclick="addToCart('Halwa Puri',350)">Add to Cart</button>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Lunch Column -->
+    <div class="style-column">
+      <h3>Lunch</h3>
+
+      <div class="menu-item">
+        <img src="https://www.thedeliciouscrescent.com/wp-content/uploads/2019/04/Chicken-Biryani-Square.jpg" alt="Chicken Biryani">
+        <div class="menu-info">
+          <h4>Chicken Biryani</h4>
+          <p class="ingredients">Rice, Chicken, Spices, Yogurt</p>
+          <span class="price">PKR 650</span>
+          <button class="add-cart" onclick="addToCart('Chicken Biryani',650)">Add to Cart</button>
+        </div>
+      </div>
+
+      <div class="menu-item">
+        <img src="https://lizasfarmhouse.com/wp-content/uploads/2025/02/beef-karahi-6-scaled.jpg" alt="Beef Karahi">
+        <div class="menu-info">
+          <h4>Beef Karahi</h4>
+          <p class="ingredients">Beef, Tomato, Green Chili, Spices</p>
+          <span class="price">PKR 800</span>
+          <button class="add-cart" onclick="addToCart('Beef Karahi',800)">Add to Cart</button>
+        </div>
+      </div>
+
+      <div class="menu-item">
+        <img src="https://glebekitchen.com/wp-content/uploads/2018/10/karahichickenbowlfront.jpg" alt="Chicken Karahi with Naan">
+        <div class="menu-info">
+          <h4>Chicken Karahi with Naan</h4>
+          <p class="ingredients">Chicken, Spices, Tomato, Naan</p>
+          <span class="price">PKR 700</span>
+          <button class="add-cart" onclick="addToCart('Chicken Karahi with Naan',700)">Add to Cart</button>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Dinner Column -->
+    <div class="style-column">
+      <h3>Dinner</h3>
+
+      <div class="menu-item">
+        <img src="https://ae.freshtohome.com/blog/wp-content/uploads/2024/06/Screenshot-2024-06-27-144123.png" alt="Mutton Pulao">
+        <div class="menu-info">
+          <h4>Mutton Pulao</h4>
+          <p class="ingredients">Mutton, Rice, Spices, Onion</p>
+          <span class="price">PKR 900</span>
+          <button class="add-cart" onclick="addToCart('Mutton Pulao',900)">Add to Cart</button>
+        </div>
+      </div>
+
+      <div class="menu-item">
+        <img src="https://i.ytimg.com/vi/fuqpRZuo2z8/maxresdefault.jpg" alt="Dam Pukht">
+        <div class="menu-info">
+          <h4>Dam Pukht</h4>
+          <p class="ingredients">Pukht Meat, Rice, Spices</p>
+          <span class="price">PKR 1000</span>
+          <button class="add-cart" onclick="addToCart('Dam Pukht',1000)">Add to Cart</button>
+        </div>
+      </div>
+
+      <div class="menu-item">
+        <img src="https://static01.nyt.com/images/2016/11/29/dining/recipelab-chick-noodle-still/recipelab-chick-noodle-still-superJumbo.jpg" alt="Chicken Soup">
+        <div class="menu-info">
+          <h4>Chicken Soup</h4>
+          <p class="ingredients">Chicken, Vegetables, Spices, Herbs</p>
+          <span class="price">PKR 300</span>
+          <button class="add-cart" onclick="addToCart('Chicken Soup',300)">Add to Cart</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+/* Main Styling */
+#style {
+  padding: 50px 20px;
+  text-align: center;
+}
+
+.section-heading {
+  font-size: 2.5em;
+  margin-bottom: 40px;
+  color: #2e8b57;
+}
+
+.style-container {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.style-column {
+  background: #fff;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 6px 20px rgba(14, 20, 18, 0.06);
+  flex: 1 1 300px;
+  max-width: 350px;
+}
+
+.menu-item {
+  margin-bottom: 25px;
+}
+
+.menu-item img {
+  width: 100%;
+  height: 200px;       /* Same height for all images */
+  object-fit: cover;   /* Crops neatly */
+  border-radius: 12px;
+  margin-bottom: 10px;
+}
+
+.menu-info h4 {
+  margin: 5px 0;
+  font-size: 1.1em;
+  color: #333;
+}
+
+.ingredients {
+  color: #7b8a84;
+  font-size: 0.9em;
+}
+
+.price {
+  font-weight: bold;
+  color: #1fa35a;
+  margin: 10px 0;
+}
+
+.add-cart {
+  background-color: #1fa35a;
+  color: #fff;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.9em;
+  width: 100%;
+}
+
+.add-cart:hover {
+  background-color: #146b3a;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .style-container {
+    flex-direction: column;
+    align-items: center;
+  }
+}
+</style>
+
+<script>
+function addToCart(item, price) {
+  alert(item + " added to cart! Price: PKR " + price);
+}
+</script>
+
+<style>
+  /* Section Container */
+#cupcake-section {
+    width: 90%;
+    margin: auto;
+    text-align: center;   /* CENTER ALL TEXT */
+    font-family: Arial, sans-serif;
+}
+
+/* Category Bar */
+.category-bar {
+    display: flex;
+    justify-content: center;   /* CENTER ITEMS */
+    gap: 60px;                 /* spacing between icons */
+    margin: 30px 0;
+    font-weight: bold;
+    color: #333;
+}
+
+.category {
+    text-align: center;
+}
+
+.category span {
+    display: block;
+    font-size: 22px;
+    margin-bottom: 5px;
+    color: #ff8c42;
+}
+
+/* Products Grid */
+.product-grid {
+    display: grid;
+    justify-content: center;   /* center the grid horizontally */
+    grid-template-columns: repeat(4, 1fr);
+    gap: 35px;
+}
+
+/* Product Cards */
+.product-card {
+    text-align: center;        /* CENTER TEXT INSIDE CARDS */
+}
+
+.product-card img {
+    width: 100%;
+    border-radius: 6px;
+}
+
+.tag {
+    display: inline-block;
+    background: #eaeaea;
+    padding: 5px 12px;
+    margin: 10px 0;
+    font-size: 12px;
+    border-radius: 20px;
+}
+
+.product-card h3 {
+    font-size: 14px;
+    margin-top: 5px;
+    color: #222;
+}
+
+.price {
+    font-weight: bold;
+    margin-top: 5px;
+}
+
+</style>
+
+</script>
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<section class="footer">
+  <a href="#" class="scroll-top-btn">↑</a>
+  <div class="footer-container">
+    <div class="footer-col">
+      <h6>Dinease</h6>
+      <p>At Dinease, we believe great food brings people together. Our mission is to deliver fresh, high-quality ingredients and delicious flavors straight to your table.</p>
+      <div class="social-links">
+        <a href="#"><i class="fab fa-twitter"></i></a>
+        <a href="#"><i class="fab fa-facebook-f"></i></a>
+        <a href="#"><i class="fab fa-instagram"></i></a>
+      </div>
+    </div>
+
+    <div class="footer-col">
+      <h6>Menu</h6>
+      <a href="#">Shop</a>
+      <a href="#">About Us</a>
+      <a href="#">Blog</a>
+      <a href="#">Contact</a>
+    </div>
+
+    <div class="footer-col">
+      <h6>Help</h6>
+      <a href="#">Shipping Information</a>
+      <a href="#">Returns & Exchanges</a>
+      <a href="#">Terms & Conditions</a>
+      <a href="#">Privacy Policy</a>
+      <a href="#">FAQs</a>
+      <a href="#">Customer Support</a>
+    </div>
+
+    <div class="footer-col">
+      <h6>Have Questions?</h6>
+      <p><i class="fas fa-map-marker-alt"></i>Islamabad</p>
+      <p><i class="fas fa-phone"></i> +2 392 3929 210</p>
+      <p><i class="fas fa-envelope"></i> muhammadfaizanaslam574@gmail.com</p>
+    </div>
+  </div>
+
+  <p class="footer-credit">
+    Copyright ©2025 Dinease. All rights reserved |
+    
+  </p>
+</section>
+
+<style>
+
+
+/* Footer */
+.footer {
+  background-color: #fff;
+  padding: 80px 20px 40px;
+  position: relative;
+  text-align: center;
+}
+.footer-container {
+  max-width: 1100px;
+  margin: auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
+  text-align: left;
+}
+.footer-col h6 {
+  font-weight: 600;
+  margin-bottom: 15px;
+}
+.footer-col p, .footer-col a {
+  color: #555;
+  text-decoration: none;
+  display: block;
+  margin-bottom: 8px;
+}
+.footer-col a:hover {
+  color: #8bc34a;
+}
+.social-links a {
+  display: inline-block;
+  margin-right: 10px;
+  color: #555;
+  background: #f0f0f0;
+  padding: 8px;
+  border-radius: 50%;
+}
+.footer-credit {
+  margin-top: 30px;
+  color: #777;
+}
+.footer-credit span {
+  color: red;
+}
+
+/* Scroll to Top Button */
+.scroll-top-btn {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translate(-50%, 0);
+  background-color: #4caf50;
+  color: white;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  text-decoration: none;
+  animation: bounceMove 1.5s infinite;
+}
+@keyframes bounceMove {
+  0%, 20%, 50%, 80%, 100% {
+    transform: translate(-50%, 0);
+  }
+  40% {
+    transform: translate(-50%, -10px);
+  }
+  60% {
+    transform: translate(-50%, -5px);
+  }
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .newsletter-container {
+    flex-direction: column;
+  }
+  .newsletter-form {
+    width: 100%;
+  }
+  .newsletter-form input {
+    flex: 1;
+  }
+}
+</style>
+
+<script>
+document.querySelector('.scroll-top-btn').addEventListener('click', function(e) {
+  e.preventDefault();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+});
+</script>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const observer = new IntersectionObserver(
+    entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("animate-fadeUp");
+          observer.unobserve(entry.target);
+        }
+      });
+    },
+    { threshold: 0.1 }
+  );
+
+  document.querySelectorAll(
+    "#blog-wrapper .row.mb-5, #blog-wrapper .col-lg-4 > div, .footer-col"
+  ).forEach(el => observer.observe(el));
+});
+</script>
+
+</body>
+</html>
+

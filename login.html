@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DineEase Login</title>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      background: url('imgi_2_bg_2.jpg') center/cover no-repeat;
+      backdrop-filter: blur(3px);
+    }
+
+    .login-container {
+      background: rgba(255, 255, 255, 0.15);
+      padding: 40px;
+      width: 380px;
+      border-radius: 15px;
+      box-shadow: 0 4px 30px rgba(0,0,0,0.2);
+      border: 1px solid rgba(255,255,255,0.3);
+      color: white;
+      text-align: center;
+    }
+
+    .login-container h2 { margin-bottom: 20px; font-size: 28px; }
+    .input-group { margin-bottom: 18px; text-align: left; }
+    .input-group label { font-size: 14px; }
+    .input-group input {
+      width: 100%;
+      padding: 10px 15px;
+      font-size: 14px;
+      margin-top: 5px;
+      border-radius: 8px;
+      border: none;
+      outline: none;
+    }
+
+    .btn {
+      width: 100%;
+      padding: 12px;
+      background: orange;
+      border: none;
+      border-radius: 25px;
+      color: white;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.3s ease;
+    }
+
+    .btn:hover { background: #ff8c1a; }
+    .error { color: #ff6b6b; font-size: 14px; margin-bottom: 10px; }
+
+    .switch-link {
+      margin-top: 15px;
+      font-size: 14px;
+      cursor: pointer;
+      color: #ffe6b3;
+      text-decoration: underline;
+    }
+
+    @media (max-width: 480px) {
+      .login-container { width: 90%; padding: 30px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="login-container">
+  <!-- LOGIN SECTION -->
+  <div id="login-box">
+    <h2>Welcome to DineEase</h2>
+    <p>Please log in to continue</p>
+
+    <div id="error-msg" class="error"></div>
+
+    <div class="input-group">
+      <label>Username</label>
+      <input type="text" id="username" placeholder="Enter your username" />
+    </div>
+
+    <div class="input-group">
+      <label>Password</label>
+      <input type="password" id="password" placeholder="Enter your password" />
+    </div>
+
+    <button class="btn" onclick="handleLogin()">Login</button>
+    <p class="switch-link" onclick="showSignup()">Don't have an account? Create one</p>
+  </div>
+
+  <!-- SIGNUP SECTION -->
+  <div id="signup-box" style="display:none;">
+    <h2>Create Account</h2>
+    <p>Join DineEase today!</p>
+
+    <div id="signup-error" class="error"></div>
+
+    <div class="input-group">
+      <label>Username</label>
+      <input type="text" id="new-username" placeholder="Choose a username" />
+    </div>
+
+    <div class="input-group">
+      <label>Password</label>
+      <input type="password" id="new-password" placeholder="Choose a password" />
+    </div>
+
+    <div class="input-group">
+      <label>Confirm Password</label>
+      <input type="password" id="confirm-password" placeholder="Re-enter password" />
+    </div>
+
+    <button class="btn" onclick="handleSignup()">Create Account</button>
+    <p class="switch-link" onclick="showLogin()">Already have an account? Login</p>
+  </div>
+</div>
+
+<script>
+  async function handleLogin() {
+    const user = document.getElementById('username').value.trim();
+    const pass = document.getElementById('password').value.trim();
+    const errorMsg = document.getElementById('error-msg');
+
+    if (!user || !pass) {
+      errorMsg.textContent = "All fields are required!";
+      return;
+    }
+
+    try {
+      const res = await fetch('http://localhost:5000/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username: user, password: pass })
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        localStorage.setItem('loggedIn', true);
+        localStorage.setItem('username', user);
+        window.location.href = 'selectOrder.html';
+      } else {
+        errorMsg.textContent = data.msg;
+      }
+    } catch (err) {
+      errorMsg.textContent = "Server error!";
+    }
+  }
+
+  async function handleSignup() {
+    const newUser = document.getElementById('new-username').value.trim();
+    const newPass = document.getElementById('new-password').value.trim();
+    const confirmPass = document.getElementById('confirm-password').value.trim();
+    const signupError = document.getElementById('signup-error');
+
+    if (!newUser || !newPass || !confirmPass) {
+      signupError.textContent = "All fields are required!";
+      return;
+    }
+    if (newPass !== confirmPass) {
+      signupError.textContent = "Passwords do not match!";
+      return;
+    }
+
+    try {
+      const res = await fetch('http://localhost:5000/signup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username: newUser, password: newPass })
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        alert(data.msg);
+        showLogin();
+      } else {
+        signupError.textContent = data.msg;
+      }
+    } catch (err) {
+      signupError.textContent = "Server error!";
+    }
+  }
+
+  function showSignup() {
+    document.getElementById('login-box').style.display = 'none';
+    document.getElementById('signup-box').style.display = 'block';
+  }
+
+  function showLogin() {
+    document.getElementById('signup-box').style.display = 'none';
+    document.getElementById('login-box').style.display = 'block';
+  }
+
+  
+</script>
+
+</body>
+</html>

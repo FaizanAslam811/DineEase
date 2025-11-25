@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DineEase - Select Order</title>
+<style>
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: url('https://images.unsplash.com/photo-1551218808-94e220e084d2?auto=format&fit=crop&w=1470&q=80') no-repeat center center/cover;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  position: relative;
+  transition: background-image 1s ease-in-out;
+}
+
+/* Dark overlay for readability */
+body::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.5);
+  z-index: 0;
+}
+
+.card {
+  position: relative;
+  z-index: 1;
+  background: rgba(255,255,255,0.95);
+  width: 90%;
+  max-width: 400px;
+  border-radius: 12px;
+  padding: 20px;
+  text-align: center;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+}
+.logo-box {
+  background: #6a1b9a;
+  padding: 20px 0;
+  border-radius: 10px;
+  margin-bottom: 15px;
+}
+.logo {
+  color: #fff;
+  font-size: 22px;
+  font-weight: bold;
+}
+h2 {
+  margin: 10px 0 15px;
+  color: #333;
+}
+.order-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+.order-buttons button {
+  background: #e91e63;
+  border: none;
+  color: #fff;
+  padding: 12px;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+.order-buttons button:hover {
+  background: #c2185b;
+}
+.location-title {
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+select, .use-location {
+  width: 100%;
+  padding: 10px;
+  margin: 8px 0;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+}
+.use-location {
+  background: #f5f5f5;
+  cursor: pointer;
+}
+.submit-btn, .logout-btn {
+  background: #9e9e9e;
+  color: #fff;
+  border: none;
+  padding: 12px;
+  width: 100%;
+  border-radius: 8px;
+  font-size: 16px;
+  margin-top: 10px;
+  cursor: pointer;
+}
+.submit-btn:hover, .logout-btn:hover {
+  background: #757575;
+}
+.logout-btn {
+  background: #f44336;
+}
+.logout-btn:hover {
+  background: #d32f2f;
+}
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="logo-box">
+    <div class="logo">DineEase</div>
+  </div>
+
+  <h2>Select your order type</h2>
+
+  <div class="order-buttons">
+    <button id="dineInBtn">Dine In</button>
+    <button id="takeAwayBtn">Take Away</button>
+    <button id="deliveryBtn">Delivery</button>
+  </div>
+
+  <div class="location-title">Please select your location</div>
+
+  <button class="use-location" id="useLocationBtn">📍 Use Current Location</button>
+
+  <select id="citySelect">
+    <option selected disabled>Select City / Region</option>
+    <option>Rawalpindi</option>
+    <option>Islamabad</option>
+  </select>
+
+  <select id="areaSelect">
+    <option selected disabled>Select Area / Sub Region</option>
+    <option>F-7</option>
+    <option>F-10</option>
+    <option>G-9</option>
+    <option>Saddar</option>
+    <option>Commercial Market</option>
+  </select>
+
+  <button class="submit-btn" id="submitBtn">Select</button>
+  <!-- Logout button -->
+  <button class="logout-btn" id="logoutBtn">Logout</button>
+</div>
+
+<script>
+let selectedOrderType = "";
+
+// Highlight selected order type
+function selectOrder(type, button) {
+  selectedOrderType = type;
+  document.querySelectorAll(".order-buttons button").forEach(btn => {
+    btn.style.background = "#e91e63";
+    btn.style.color = "#fff";
+  });
+  button.style.background = "#007bff";
+  button.style.color = "#fff";
+}
+
+document.getElementById("dineInBtn").addEventListener("click", function () {
+  selectOrder("Dine In", this);
+});
+document.getElementById("takeAwayBtn").addEventListener("click", function () {
+  selectOrder("Take Away", this);
+});
+document.getElementById("deliveryBtn").addEventListener("click", function () {
+  selectOrder("Delivery", this);
+});
+
+// Save order to backend (MongoDB)
+document.getElementById("submitBtn").addEventListener("click", async function () {
+  const citySelect = document.getElementById("citySelect");
+  const areaSelect = document.getElementById("areaSelect");
+  const city = citySelect.value;
+  const area = areaSelect.value;
+  const username = localStorage.getItem("username");
+
+  if (!username) {
+    alert("You must be logged in to place an order!");
+    return;
+  }
+  if (!selectedOrderType || citySelect.selectedIndex === 0 || areaSelect.selectedIndex === 0) {
+    alert("Please select all fields!");
+    return;
+  }
+
+  const orderData = { username, orderType: selectedOrderType, city, area };
+
+  try {
+    const response = await fetch("http://localhost:5000/saveOrder", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(orderData)
+    });
+
+    const result = await response.json();
+    if (response.ok) {
+      alert(result.msg);
+      window.location.href = "index.html"; // Redirect after saving
+    } else {
+      alert(result.msg);
+    }
+  } catch (err) {
+    alert("Error saving order: " + err.message);
+  }
+});
+
+// Use current location
+document.getElementById("useLocationBtn").addEventListener("click", function() {
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(position => {
+      const lat = position.coords.latitude;
+      const lng = position.coords.longitude;
+      alert(`Your location: Lat ${lat}, Lng ${lng}`);
+      // Optional: auto-fill city/area based on coordinates using API
+    }, err => {
+      alert("Unable to fetch location: " + err.message);
+    });
+  } else {
+    alert("Geolocation not supported by your browser.");
+  }
+});
+
+// Logout functionality
+document.getElementById("logoutBtn").addEventListener("click", function() {
+  localStorage.removeItem("username");
+  alert("You have been logged out!");
+  window.location.href = "login.html"; // Redirect to login page
+});
+
+// Background image slideshow
+const backgrounds = [
+  'https://images.unsplash.com/photo-1551218808-94e220e084d2?auto=format&fit=crop&w=1470&q=80',
+  'https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=1470&q=80'
+];
+let currentBg = 0;
+setInterval(() => {
+  currentBg = (currentBg + 1) % backgrounds.length;
+  document.body.style.backgroundImage = `url('${backgrounds[currentBg]}')`;
+}, 5000);
+</script>
+
+</body>
+</html>

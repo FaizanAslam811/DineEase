@@ -1,0 +1,1198 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DineEase</title>
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Open+Sans:wght@400&display=swap" rel="stylesheet">
+  <!-- Font Awesome for Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+  <!-- ✅ Preload Hero Images -->
+  <link rel="preload" as="image" href="./imgi_2_bg_2.jpg">
+  <link rel="preload" as="image" href="./imgi_3_bg_3.jpg">
+
+  <style>
+    .top-info-wrapper { position: fixed; top: 0; width: 100%; z-index: 9999; }
+    .top-info-bar {
+      background-color: #8cc152;
+      color: white;
+      font-size: 14px;
+      font-weight: 600;
+      width: 100%;
+      padding: 8px 0;
+    }
+    .info-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+      gap: 20px;
+    }
+    .info-container i { margin-right: 8px; }
+
+    @media (max-width: 768px) {
+      .top-info-wrapper { display: none; }
+      .info-container {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        gap: 5px;
+      }
+      .top-info-bar { border-bottom: 3px solid white; }
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body, html {
+      height: 100%;
+      font-family: 'Open Sans', sans-serif;
+      overflow-x: hidden;
+    }
+
+   nav {
+  z-index: 1000;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 80px;
+  position: fixed;
+  width: 100%;
+  top: 0; /* changed from 32px */
+  background-color: white;
+  transition: all 0.3s ease-in-out;
+}
+.logout-btn {
+  background: linear-gradient(45deg, #ff4d4d, #ff1a1a);
+  color: white;
+  border: none;
+  padding: 10px 22px;
+  border-radius: 25px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: 0.3s ease;
+  font-family: 'Poppins', sans-serif;
+}
+
+.logout-btn:hover {
+  background: linear-gradient(45deg, #ff1a1a, #cc0000);
+  transform: scale(1.05);
+}
+
+.hero-section {
+  padding-top: 100px; /* optional: adjust so content isn't hidden behind nav */
+}
+
+    nav.scrolled { background-color: white !important; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); }
+    nav.scrolled .logo { color: black; }
+    nav.scrolled .logo span { color: orange; }
+    nav.scrolled .nav-links a { color: black !important; }
+    nav.scrolled .social-icons a { color: black !important; }
+
+    .logo {
+      font-size: 1.8rem;
+      font-family: 'Orbitron', sans-serif;
+      color: black;
+    }
+    .logo span { color: orange; }
+    .menu-toggle { display: none; font-size: 24px; color: black; cursor: pointer; z-index: 1001; }
+    .nav-links { list-style: none; display: flex; gap: 30px; align-items: center; position: relative; }
+    .nav-links>li { position: relative; }
+    .nav-links a { text-decoration: none; color: black; font-weight: 500; cursor: pointer; }
+
+    .dropdown-menu {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      background-color: white;
+      padding: 10px 0;
+      list-style: none;
+      min-width: 150px;
+      z-index: 999;
+      border-radius: 4px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+      max-height: 200px;
+      overflow-y: auto;
+    }
+    .dropdown-menu::-webkit-scrollbar { width: 6px; }
+    .dropdown-menu::-webkit-scrollbar-thumb { background-color: orange; border-radius: 3px; }
+    .dropdown-menu li { padding: 10px 20px; }
+    .dropdown-menu li a { color: black; text-decoration: none; display: block; font-weight: 500; }
+    .dropdown-menu li a:hover { background-color: rgba(0, 0, 0, 0.05); }
+    .dropdown.show .dropdown-menu { display: block; }
+    .social-icons a { margin-left: 15px; color: white; }
+
+    .hero-section {
+      height: 100vh;
+      position: relative;
+      color: white;
+      text-align: center;
+      padding-top: 120px;
+      background-image: url('./imgi_2_bg_2.jpg'); /* ✅ Initial background */
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+    }
+
+    .overlay {
+      background-color: rgba(0, 0, 0, 0.4);
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      z-index: 1;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      padding: 20px;
+      max-width: 800px;
+      margin: 100px auto 40px;
+      transition: opacity 0.5s ease;
+    }
+
+    .hero-content .slide { display: none; animation: fadeSlide 1s ease-in-out; }
+    .hero-content .slide.active { display: block; }
+
+    .hero-content h1 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 48px;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6);
+      margin-bottom: 15px;
+    }
+    .hero-content p {
+      font-size: 18px;
+      line-height: 1.6;
+      color: #f0f0f0;
+      text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.4);
+    }
+
+    @keyframes fadeSlide {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .dots { margin-top: 30px; display: flex; justify-content: center; gap: 10px; }
+    .dot {
+      height: 14px; width: 14px;
+      background-color: #ccc;
+      border-radius: 50%;
+      display: inline-block;
+      transition: background-color 0.3s ease;
+      cursor: pointer;
+    }
+    .dot.active { background-color: orange; box-shadow: 0 0 8px orange; }
+
+    .scroll-icon { z-index: 2; text-align: center; margin-top: 20px; }
+    .scroll-icon i { font-size: 28px; color: white; animation: bounce 2s infinite; }
+    @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(10px); } }
+
+    @media (max-width: 991px) {
+      nav { padding: 20px 30px; }
+      .menu-toggle { display: block; 
+      color: white;
+      #menu-toggle.hide { display: none !important;
+       }}
+      .nav-links {
+        flex-direction: column;
+        background-color: white;
+        position: fixed;
+        top: 0; right: -100%;
+        width: 260px; height: 100%;
+        padding: 60px 20px 20px;
+        transition: right 0.3s ease-in-out;
+        box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
+        z-index: 999;
+      }
+      .nav-links.show { right: 0; }
+      .nav-close {
+        align-self: flex-end; font-size: 24px; color: #333; cursor: pointer;
+        margin-bottom: 20px; display: block;
+      }
+      .nav-links li { margin: 20px 0; }
+      .nav-links a { color: black; font-size: 18px; }
+      .dropdown-menu { position: absolute; top: 100%; left: 0; background-color: #f9f9f9; }
+      .dropdown-menu li a { color: #333; }
+      .dropdown-menu li a:hover { background-color: #eee; }
+      .dropdown-toggle i { color: black !important; }
+      .social-icons { display: flex; gap: 10px; margin-top: 30px; }
+      .social-icons a { color: #333; font-size: 18px; }
+    }
+
+    @media (min-width: 992px) { .nav-close { display: none; } }
+    @media (max-width: 768px) { nav { top: 0;
+    background-color: black;
+   }
+   .logo{
+    color: white
+   }
+   }
+    /* ✅ Animation keyframes */
+@keyframes fadeUp {
+  0% {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ✅ Animation class */
+.animate-fadeUp {
+  opacity: 0;
+  animation: fadeUp 0.8s ease-out forwards;
+}
+
+  </style>
+</head>
+
+<body>
+ 
+
+  <div id="Home" style="position: absolute; top: 0;"></div>
+
+  <!-- NAVIGATION -->
+  <!-- NAVIGATION -->
+   <!-- NAVIGATION -->
+  <nav>
+    <div class="logo nav-click" onclick="document.getElementById('home').scrollIntoView({ behavior: 'smooth' });">
+      DineEase<span>.</span>
+    </div>
+
+    <div class="menu-toggle" id="menu-toggle"><i class="fas fa-bars"></i></div>
+
+    <ul class="nav-links" id="nav-links">
+      <span class="nav-close" id="nav-close"><i class="fas fa-xmark"></i></span>
+      <li><a href="index.html" class="nav-click">Home</a></li>
+      <li class="dropdown" id="dropdown">
+        <a href="menu.html" class="nav-click">Menu</a>
+        <span class="dropdown-toggle" id="dropdown-toggle" style="cursor: pointer; margin-left: 5px;">
+        
+        </span>
+          
+      </li>
+      <li><a href="Blog.html" class="nav-click">Blog</a></li>
+         <li><a href="about.html" class="nav-click">About</a></li>
+      <li><a href="contactus.html" class="nav-click">Contact</a></li>
+        <li><a href="cart.html" class="nav-click" title="Cart"><i class="fas fa-shopping-cart" style="color: green;"></i></a></li>
+
+      <li class="social-icons">
+        <a href="#"><i class="fab fa-facebook-f"></i></a>
+        <a href="#"><i class="fab fa-twitter"></i></a>
+        <a href="#"><i class="fab fa-linkedin-in"></i></a>
+      </li>
+    </ul>
+    <button id="logoutBtn" class="logout-btn">Logout</button>
+
+  </nav>
+
+  <!-- HERO SECTION -->
+  <section class="hero-section" id="home">
+    <div class="overlay"></div>
+    <div class="hero-content">
+      <div class="slide active">
+        <h1>We Serves Fresh Vegetables & Fruits</h1>
+        <p>We deliver organic vegetables and Fruits</p>
+      </div>
+      <div class="slide">
+        <h1>100% Fresh and Organic Foods</h1>
+        <p>We deliver organic vegetables and afaruits</p>
+      </div>
+
+      <div class="dots">
+        <span class="dot active" onclick="showSlide(0)"></span>
+        <span class="dot" onclick="showSlide(1)"></span>
+      </div>
+
+      <!-- ✅ View Details Button -->
+      
+    </div>
+  </section>
+
+  <style>
+    .view-btn {
+      display: inline-block;
+      margin-top: 20px;
+      background-color: orange;
+      color: white;
+      padding: 12px 30px;
+      border-radius: 25px;
+      text-decoration: none;
+      font-size: 16px;
+      font-weight: 600;
+      transition: background 0.3s ease;
+      z-index: 2;
+      position: relative;
+    }
+    .view-btn:hover {
+      background-color: #ff8000;
+    }
+  </style>
+  <section id="about">
+  <style>
+    #about {
+      display: flex;
+      justify-content: center;     /* 🔥 centers horizontally */
+      align-items: center;         /* 🔥 centers vertically */
+      gap: 40px;
+      padding: 60px 8%;
+      font-family: "Poppins", sans-serif;
+      color: #444;
+      text-align: center;          /* 🔥 centers all text */
+    }
+
+    #about .about-images img {
+      width: 420px;
+      height: auto;
+      border-radius: 10px;
+      object-fit: cover;
+      margin: 0 auto;              /* 🔥 centers the image */
+      display: block;
+    }
+
+    #about .sub-title {
+      font-size: 60px;
+      font-family: "Cormorant Garamond", serif;
+      color: #c8b085;
+      margin: 0;
+      font-weight: 300;
+    }
+
+    #about .title {
+      font-size: 46px;
+      margin: 10px 0 20px;
+      font-weight: 700;
+      color: #222;
+    }
+
+    #about .description {
+      max-width: 450px;
+      line-height: 1.7;
+      margin: 0 auto 25px;          /* 🔥 centers block text */
+    }
+
+    #about .hours {
+      margin-bottom: 15px;
+    }
+
+    #about .phone {
+      font-size: 32px;
+      color: #b68a45;
+    }
+
+    /* Responsive */
+    @media (max-width: 900px) {
+      #about {
+        flex-direction: column;
+      }
+      #about .about-images img {
+        width: 100%;
+      }
+    }
+  </style>
+
+  <div class="about-images">
+    <img src="imgi_10_about-1.jpg" alt="Chef image">
+  </div>
+
+  <div class="about-content">
+    <h2 class="sub-title">About</h2>
+    <h1 class="title">DineEase<br>Restaurant</h1>
+
+    <p class="description">
+      A small river named Duden flows by their place and supplies it with the
+      necessary regelialia. It is a paradisematic country, in which roasted parts
+      of sentences fly into your mouth.
+    </p>
+
+    
+
+    <p class="phone"><strong>+1-978-123-4567</strong></p>
+  </div>
+</section>
+
+<section id="menu">
+  <style>
+    #menu {
+      padding: 60px 8%;
+      font-family: "Poppins", sans-serif;
+      text-align: center;
+    }
+
+    #menu .subtitle {
+      color: #c8b085;
+      font-size: 14px;
+      letter-spacing: 1px;
+    }
+
+    #menu .title {
+      font-size: 38px;
+      font-weight: 700;
+      margin-bottom: 40px;
+      font-family: "Cormorant Garamond", serif;
+    }
+
+    #menu .menu-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 30px;
+      justify-content: center;
+    }
+
+    #menu .menu-item {
+      display: flex;
+      background: #fff;
+      border: 1px solid #e5e5e5;
+      align-items: center;
+    }
+
+    #menu .menu-item img {
+      width: 160px;
+      height: 140px;
+      object-fit: cover;
+    }
+
+    #menu .menu-text {
+      padding: 20px;
+      text-align: left;
+    }
+
+    #menu .menu-text h3 {
+      font-family: "Cormorant Garamond", serif;
+      font-size: 22px;
+      margin: 0 0 5px;
+      color: #333;
+    }
+
+    #menu .menu-text p {
+      margin: 0;
+      font-size: 14px;
+      color: #666;
+      margin-bottom: 10px;
+    }
+
+    #menu .price {
+      font-weight: 700;
+      color: #000;
+      font-size: 16px;
+    }
+
+    /* Responsive */
+    @media (max-width: 900px) {
+      #menu .menu-grid {
+        grid-template-columns: 1fr;
+      }
+      #menu .menu-item {
+        flex-direction: column;
+        text-align: center;
+      }
+      #menu .menu-text {
+        text-align: center;
+      }
+    }
+  </style>
+
+  <p class="subtitle">Popular Menu</p>
+  <h2 class="title">Delicious Food Menu</h2>
+
+  <div class="menu-grid">
+
+    <!-- ITEM 1 -->
+    <div class="menu-item">
+      <img src="SALAD.png" alt="">
+      <div class="menu-text">
+        <h3>SALAD</h3>
+        <p>Tender slow-cooked pork in a soft artisan bun with fresh greens.</p>
+        <span class="price">Rs. 1,850</span>
+      </div>
+    </div>
+
+    <!-- ITEM 2 -->
+    <div class="menu-item">
+      <img src="easter.png" alt="">
+      <div class="menu-text">
+        <h3>EASTER DELIGHT</h3>
+        <p>Golden fluffy pancakes topped with berries and warm maple drizzle.</p>
+        <span class="price">Rs. 1,700</span>
+      </div>
+    </div>
+
+    <!-- ITEM 3 -->
+    <div class="menu-item">
+      <img src="roasted marrow.png" alt="">
+      <div class="menu-text">
+        <h3>ROASTED MARROW</h3>
+        <p>Rich roasted bone marrow served with toasted baguette slices.</p>
+        <span class="price">Rs. 1,950</span>
+      </div>
+    </div>
+
+    <!-- ITEM 4 -->
+    <div class="menu-item">
+      <img src="PORKSD.png" alt="">
+      <div class="menu-text">
+        <h3>PORK SANDWICH</h3>
+        <p>Crisp fried schnitzel paired with lemon and herb seasoning.</p>
+        <span class="price">Rs. 1,800</span>
+      </div>
+    </div>
+
+    <!-- ITEM 5 -->
+   
+<div class="menu-item">
+      <img src="PORKSD.png" alt="">
+      <div class="menu-text">
+        <h3>LAMB SANDWICH</h3>
+        <p>Crisp fried schnitzel paired with lemon and herb seasoning.</p>
+        <span class="price">Rs. 1,800</span>
+      </div>
+    </div>
+
+    <!-- ITEM 6 -->
+    <div class="menu-item">
+      <img src="ROAST.png" alt="">
+      <div class="menu-text">
+        <h3>CHICKEN ROAST</h3>
+        <p>Slow-roasted chicken with herbs, served with light garden salad.</p>
+        <span class="price">Rs. 1,600</span>
+      </div>
+    </div>
+
+  </div>
+<section id="style">
+  <h2 class="section-heading">Our Delicious Creations</h2>
+  <div class="style-container">
+    <div class="style-item">
+      <div class="image-wrapper">
+        <img src="https://cdn.pixabay.com/photo/2024/05/02/18/00/sushi-8735298_1280.jpg" alt="Sushi platter">
+        <div class="caption">Sushi Platter</div>
+      </div>
+    </div>
+
+    <div class="style-item">
+      <div class="image-wrapper">
+        <img src="dough.jpg" alt="Dough preparation">
+        <div class="caption">Dough Preparation</div>
+      </div>
+    </div>
+
+    <div class="style-item">
+      <div class="image-wrapper">
+        <img src="https://getwallpapers.com/wallpaper/full/0/9/f/773303-donuts-wallpapers-2560x1600-htc.jpg" alt="Stacked donuts">
+        <div class="caption">Stacked Donuts</div>
+      </div>
+    </div>
+
+    <div class="style-item">
+      <div class="image-wrapper">
+        <img src="https://theviewfromgreatisland.com/wp-content/uploads/2018/06/cutting-fresh-salmon.jpg" alt="Grilled salmon dish">
+        <div class="caption">Grilled Salmon Dish</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+#style {
+  padding: 40px;
+  background: #f9f7f4;
+  text-align: center;
+}
+
+.section-heading {
+  font-size: 2em;
+  margin-bottom: 30px;
+  color: #2e8b57;
+}
+
+/* Grid container */
+.style-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+  justify-items: center;
+}
+
+/* Individual item */
+.style-item {
+  overflow: hidden;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  opacity: 0;
+  transform: scale(0.9);
+  animation: fadeInScale 0.8s forwards;
+}
+
+.style-item:nth-child(2) { animation-delay: 0.2s; }
+.style-item:nth-child(3) { animation-delay: 0.4s; }
+.style-item:nth-child(4) { animation-delay: 0.6s; }
+
+/* Image wrapper */
+.image-wrapper {
+  position: relative;
+  width: 200px;
+  height: 200px;
+}
+
+.image-wrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 12px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Hover effect */
+.image-wrapper img:hover {
+  transform: scale(1.05);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+}
+
+/* Caption at bottom */
+.caption {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  padding: 8px 0;
+  background: rgba(0,0,0,0.5);
+  color: #fff;
+  font-weight: 600;
+  text-align: center;
+  border-bottom-left-radius: 12px;
+  border-bottom-right-radius: 12px;
+  transition: background 0.3s ease;
+}
+
+.image-wrapper:hover .caption {
+  background: rgba(0,0,0,0.7);
+}
+
+/* Fade-in scale animation */
+@keyframes fadeInScale {
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .style-container {
+    grid-template-columns: 1fr;
+  }
+}
+.home-hero {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 100px 80px;
+  gap: 60px;
+  min-height: 100vh;
+}
+
+/* Left Section */
+.hero-left {
+  flex: 1;
+  padding: 20px;
+}
+
+.hero-left h1 {
+  font-size: 48px;
+  font-weight: 700;
+  margin-bottom: 20px;
+  color: #000;
+}
+
+.hero-left p {
+  font-size: 16px;
+  color: #666;
+  line-height: 1.6;
+  margin-bottom: 30px;
+}
+
+.food-features {
+  display: flex;
+  gap: 30px;
+  margin-bottom: 40px;
+}
+
+.feature {
+  text-align: center;
+}
+
+.feature img {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  object-fit: cover;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+.feature p {
+  margin-top: 10px;
+  font-size: 14px;
+}
+
+/* Button */
+.book-btn {
+  padding: 14px 30px;
+  background-color: #ff4d4d;
+  color: white;
+  border: none;
+  border-radius: 30px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.book-btn:hover {
+  background-color: #cc0000;
+  transform: translateY(-3px);
+}
+
+/* Right Section */
+.hero-right {
+  flex: 1;
+}
+
+.hero-right img {
+  width: 100%;
+  height: 100vh;
+  object-fit: cover;
+  border-radius: 10px;
+}
+
+/* Responsive */
+@media (max-width: 992px) {
+  .home-hero {
+    flex-direction: column;
+    padding: 60px 20px;
+  }
+  
+  .hero-right img {
+    height: 300px;
+    width: 100%;
+  }
+  
+  .hero-left h1 {
+    font-size: 36px;
+  }
+}
+
+</style>
+<section class="home-hero">
+  <div class="hero-left">
+    <h1>We Love <br> Delicious Foods</h1>
+    <p>
+      A small river named Duden flows by their place and supplies it 
+      with the necessary regelialia. It is a paradisematic country.
+    </p>
+
+    <div class="food-features">
+      <div class="feature">
+        <img src="https://parade.com/.image/t_share/MTk5MjcxMTIyMTIwNzQ2Mzk4/breakfast-food-to-help-you-poop-according-to-dietitians.jpg" alt="">
+        <p>Breakfast<br>Items</p>
+      </div>
+      <div class="feature">
+        <img src="https://images.ctfassets.net/trvmqu12jq2l/5BoEIJ2zef4gUktzd2abJS/d13223840ca0d4a21c350e46a1ecac82/blog-hero-1208x1080-v07.06.01.jpg?q=70&w=1208&h=1080&f=faces&fit=fill" alt="">
+        <p>Lunch <br>Items</p>
+      </div>
+      <div class="feature">
+        <img src="https://png.pngtree.com/background/20230512/original/pngtree-japanese-food-in-a-table-with-other-dinner-items-on-it-picture-image_2503404.jpg" alt="">
+        <p>Dinner Items<br>Items</p>
+      </div>
+    </div>
+
+    <a href="bookatable.html">
+  <button class="book-btn">Book A Table</button>
+</a>
+
+  </div>
+
+  <div class="hero-right">
+    <img src="https://wallpaperaccess.com/full/767033.jpg" alt="Delicious Food">
+  </div>
+</section>
+
+
+<section id="style" class="counter-section">
+  <div class="overlay"></div>
+  <div class="counter-container">
+    <div class="counter-box">
+      <span class="counter" data-target="18">0</span>
+      <p>Years of Experienced</p>
+    </div>
+    <div class="counter-box">
+      <span class="counter" data-target="20000">0</span>
+      <p>Happy Customers</p>
+    </div>
+    <div class="counter-box">
+      <span class="counter" data-target="564">0</span>
+      <p>Finished Projects</p>
+    </div>
+    <div class="counter-box">
+      <span class="counter" data-target="300">0</span>
+      <p>Working Days</p>
+    </div>
+  </div>
+</section>
+
+<style>
+  #style {
+    position: relative;
+    background: url('/imgi_11_bg_4.jpg') center/cover no-repeat;
+    padding: 80px 0;
+    color: white;
+    text-align: center;
+  }
+
+  #style .overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1;
+  }
+
+  .counter-container {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    justify-content: center;
+    gap: 80px;
+    flex-wrap: wrap;
+  }
+
+  .counter-box {
+    text-align: center;
+  }
+
+  .counter {
+    font-size: 42px;
+    font-weight: bold;
+    display: block;
+  }
+
+  .counter-box p {
+    font-size: 18px;
+    margin-top: 5px;
+  }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .counter-container {
+      gap: 40px;
+    }
+    .counter {
+      font-size: 32px;
+    }
+    .counter-box p {
+      font-size: 16px;
+    }
+  }
+</style>
+
+<script>
+  const counters = document.querySelectorAll('.counter');
+
+  const startCounter = (counter) => {
+    const target = +counter.getAttribute('data-target');
+    const increment = Math.ceil(target / 200);
+    let count = 0;
+
+    const updateCounter = () => {
+      count += increment;
+      if (count >= target) {
+        counter.innerText = target.toLocaleString();
+      } else {
+        counter.innerText = count.toLocaleString();
+        requestAnimationFrame(updateCounter);
+      }
+    };
+
+    updateCounter();
+  };
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        startCounter(entry.target);
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.5 });
+
+  counters.forEach(counter => {
+    observer.observe(counter);
+  });
+</script>
+
+  <script>
+    // Hero text slider
+    let currentSlide = 0;
+    const slides = document.querySelectorAll('.hero-content .slide');
+    const dots = document.querySelectorAll('.dot');
+    function showSlide(index) {
+      slides.forEach((slide, i) => {
+        slide.classList.remove('active');
+        dots[i].classList.remove('active');
+      });
+      slides[index].classList.add('active');
+      dots[index].classList.add('active');
+      currentSlide = index;
+    }
+    setInterval(() => {
+      currentSlide = (currentSlide + 1) % slides.length;
+      showSlide(currentSlide);
+    }, 5000);
+    
+
+    // Nav toggle
+    const menuToggle = document.getElementById('menu-toggle');
+    const navLinks = document.getElementById('nav-links');
+    const navClose = document.getElementById('nav-close');
+    const dropdown = document.getElementById('dropdown');
+    const dropdownToggle = document.getElementById('dropdown-toggle');
+
+    menuToggle.addEventListener('click', function (e) {
+      e.stopPropagation();
+      navLinks.classList.add('show');
+      menuToggle.classList.add('hide');
+    });
+    navClose.addEventListener('click', function () {
+      navLinks.classList.remove('show');
+      menuToggle.classList.remove('hide');
+    });
+    dropdownToggle.addEventListener('click', function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+      dropdown.classList.toggle('show');
+    });
+    document.addEventListener('click', function (e) {
+      if (!dropdown.contains(e.target)) dropdown.classList.remove('show');
+      if (navLinks.classList.contains('show') && !navLinks.contains(e.target) && !menuToggle.contains(e.target)) {
+        navLinks.classList.remove('show');
+        menuToggle.classList.remove('hide');
+      }
+    });
+    window.addEventListener('scroll', function () {
+      const nav = document.querySelector('nav');
+      if (window.scrollY > 50) nav.classList.add('scrolled');
+      else nav.classList.remove('scrolled');
+    });
+
+    // ✅ Hero background slideshow with preload
+    const hero = document.querySelector('.hero-section');
+    const images = ["./imgi_2_bg_2.jpg", "imgi_3_bg_3.jpg"];
+    images.forEach(src => { const img = new Image(); img.src = src; }); // preload
+    let index = 0;
+    setInterval(() => {
+      index = (index + 1) % images.length;
+      hero.style.backgroundImage = `url('${images[index]}')`;
+    }, 5000);
+    
+  </script>
+
+
+<script>
+  function logout() {
+    localStorage.removeItem("loggedIn");
+    window.location.href = "login.html";
+  }
+</script>
+<script>
+  // Logout function
+  document.getElementById('logoutBtn')?.addEventListener('click', function () {
+    localStorage.removeItem('loggedIn');
+    window.location.href = "login.html"; // Redirect to login after logout
+  });
+
+  // Protect pages - prevent access if not logged in
+  if (!localStorage.getItem("loggedIn")) {
+    if (!window.location.pathname.includes("login.html")) {
+      window.location.href = "login.html";
+    }
+  }
+  
+</script>
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<section class="footer">
+  <a href="#" class="scroll-top-btn">↑</a>
+  <div class="footer-container">
+    <div class="footer-col">
+      <h6>Dinease</h6>
+      <p>At Dinease, we believe great food brings people together. Our mission is to deliver fresh, high-quality ingredients and delicious flavors straight to your table.</p>
+      <div class="social-links">
+        <a href="#"><i class="fab fa-twitter"></i></a>
+        <a href="#"><i class="fab fa-facebook-f"></i></a>
+        <a href="#"><i class="fab fa-instagram"></i></a>
+      </div>
+    </div>
+
+    <div class="footer-col">
+      <h6>Menu</h6>
+      <a href="#">Shop</a>
+      <a href="#">About Us</a>
+      <a href="#">Blog</a>
+      <a href="#">Contact</a>
+    </div>
+
+    <div class="footer-col">
+      <h6>Help</h6>
+      <a href="#">Shipping Information</a>
+      <a href="#">Returns & Exchanges</a>
+      <a href="#">Terms & Conditions</a>
+      <a href="#">Privacy Policy</a>
+      <a href="#">FAQs</a>
+      <a href="#">Customer Support</a>
+    </div>
+
+    <div class="footer-col">
+      <h6>Have Questions?</h6>
+      <p><i class="fas fa-map-marker-alt"></i>Islamabad</p>
+      <p><i class="fas fa-phone"></i> +2 392 3929 210</p>
+      <p><i class="fas fa-envelope"></i> muhammadfaizanaslam574@gmail.com</p>
+    </div>
+  </div>
+
+  <p class="footer-credit">
+    Copyright ©2025 Dinease. All rights reserved |
+    
+  </p>
+</section>
+
+<style>
+  
+
+
+/* Footer */
+.footer {
+  background-color: #fff;
+  padding: 80px 20px 40px;
+  position: relative;
+  text-align: center;
+}
+.footer-container {
+  max-width: 1100px;
+  margin: auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
+  text-align: left;
+}
+.footer-col h6 {
+  font-weight: 600;
+  margin-bottom: 15px;
+}
+.footer-col p, .footer-col a {
+  color: #555;
+  text-decoration: none;
+  display: block;
+  margin-bottom: 8px;
+}
+.footer-col a:hover {
+  color: #8bc34a;
+}
+.social-links a {
+  display: inline-block;
+  margin-right: 10px;
+  color: #555;
+  background: #f0f0f0;
+  padding: 8px;
+  border-radius: 50%;
+}
+.footer-credit {
+  margin-top: 30px;
+  color: #777;
+}
+.footer-credit span {
+  color: red;
+}
+
+/* Scroll to Top Button */
+.scroll-top-btn {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translate(-50%, 0);
+  background-color: #4caf50;
+  color: white;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  text-decoration: none;
+  animation: bounceMove 1.5s infinite;
+}
+@keyframes bounceMove {
+  0%, 20%, 50%, 80%, 100% {
+    transform: translate(-50%, 0);
+  }
+  40% {
+    transform: translate(-50%, -10px);
+  }
+  60% {
+    transform: translate(-50%, -5px);
+  }
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .newsletter-container {
+    flex-direction: column;
+  }
+  .newsletter-form {
+    width: 100%;
+  }
+  .newsletter-form input {
+    flex: 1;
+  }
+}
+</style>
+
+<script>
+document.querySelector('.scroll-top-btn').addEventListener('click', function(e) {
+  e.preventDefault();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+});
+</script>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const observer = new IntersectionObserver(
+    entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("animate-fadeUp");
+          observer.unobserve(entry.target);
+        }
+      });
+    },
+    { threshold: 0.1 }
+  );
+
+  document.querySelectorAll(
+    "#blog-wrapper .row.mb-5, #blog-wrapper .col-lg-4 > div, .footer-col"
+  ).forEach(el => observer.observe(el));
+});
+</script>
+
+</body>
+</html>
+
